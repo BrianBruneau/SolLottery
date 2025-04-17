@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solana Lottery</title>
+
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet"
+  />
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-light">
+
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm rounded-4">
+          <div class="card-header bg-dark text-white text-center">
+            <h1>🎰 Solana Lottery</h1>
+            <small class="text-muted">Powered by decentralized luck</small>
+          </div>
+
+          <div class="card-body">
+
+            <!-- WALLET CONNECT -->
+            <section id="wallet-ui" class="text-center mb-4">
+                <div id="wallet-connection-status">
+                    <span class="badge bg-warning text-dark">Wallet not connected</span>
+                  </div>
+            <button id="connect-wallet" class="btn btn-primary mt-3">
+                🔗 Connect Wallet
+              </button>
+              <p id="wallet-address" class="text-muted small mt-2">
+                <!-- Address will appear here -->
+              </p>
+            </section>
+
+            <hr />
+
+            <!-- LOTTERY STATUS -->
+            <section class="mb-4">
+              <h4 class="mb-3">🎯 Current Lottery</h4>
+              <div id="lottery-status" class="alert alert-info">
+                No lottery is currently active.
+              </div>
+
+              <div id="lottery-details" class="d-none">
+                <p><strong>Prize:</strong> <span id="prize-amount">0</span> SOL</p>
+                <p><strong>Total Players:</strong> <span id="player-count">0</span></p>
+              </div>
+            </section>
+
+            <!-- PLAYER ACTIONS -->
+            <section id="player-section" class="mb-4 d-none">
+              <h4 class="mb-3">Ready to play?</h4>
+              <div class="input-group mb-3">
+                <input 
+                  type="number" 
+                  id="participation-amount" 
+                  class="form-control" 
+                  placeholder="Amount in SOL" 
+                  step="0.01" 
+                  min="0.01" 
+                  value="1"
+                />
+                <button id="participate" class="btn btn-success">
+                  🎟 Join the Lottery
+                </button>
+              </div>
+            </section>
+
+            <!-- ADMIN CONTROLS -->
+            <section id="admin-section" class="mb-4 d-none">
+              <h4 class="mb-3">👑 Admin Panel <small class="badge bg-info">Owner Only</small></h4>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <button id="start-lottery" class="btn btn-outline-success w-100">
+                    🚀 Start New Lottery
+                  </button>
+                </div>
+                <div class="col-md-6">
+                  <button id="draw-winner" class="btn btn-warning w-100">
+                    🏆 Draw Winner
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- LOTTERY RESULTS -->
+            <section class="mb-4">
+              <h4 class="mb-3">📢 Latest Results</h4>
+              <div id="results" class="alert alert-light">
+                No winner has been drawn yet.
+              </div>
+            </section>
+          </div>
+
+          <div class="card-footer text-center text-muted">
+            <small>🛠 Built with ❤️ by the group 11 of the Encode Club's Solana Rust Bootcamp</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Solana Web3 SDK -->
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
+  <!-- JS files -->
+  <script src="js/solana.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
