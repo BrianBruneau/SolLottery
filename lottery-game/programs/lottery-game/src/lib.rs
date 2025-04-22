@@ -1,11 +1,14 @@
 
 use anchor_lang::prelude::*;
+use orao_solana_vrf::cpi::accounts::RequestV2;
+use orao_solana_vrf::program::OraoVrf;
+
 
 
 declare_id!("5hX9mhahXK14yftY8ZePS2dZBp1m7zn7Nm61rBtyBTbf");
 
 #[program]
-mod lottery_game {
+pub mod lottery_game {
     use super::*;
 
     pub fn start_lottery(ctx: Context<StartLottery>, prize_amount: u64) -> Result<()> {
@@ -35,7 +38,6 @@ mod lottery_game {
             return Err(LotteryError::LotteryNotActive.into());
         }
 
-        
         let winner = lottery.players[0]; 
 
         let winner_account = &mut ctx.accounts.winner;
@@ -46,7 +48,32 @@ mod lottery_game {
 
         Ok(())
     }
+
+    pub fn request_randomness(ctx: Context<RequestRandomness>, seed: [u8; 32]) -> Result<()> {
+        let cpi_ctx = CpiContext::new(
+            ctx.accounts.vrf_program.to_account_info(),
+            RequestV2 {
+                payer: ctx.accounts.payer.to_account_info(),
+                network_state: ctx.accounts.config.to_account_info(),
+                treasury: ctx.accounts.treasury.to_account_info(),
+                request: ctx.accounts.request.to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+            }
+        );
+
+        orao_solana_vrf::cpi::request_v2(cpi_ctx, seed)?;
+        Ok(())
+    }
+
+    // pub fn use_randomness(ctx: Context<UseRandomness>) -> Result<()> {
+    //     let request_account = ctx.accounts.request.load()?;
+    //     let randomness = request_account.randomness.ok_or(YourError::NotFulfilled)?;
+    //     // Use randomness
+    //     Ok(())
+    // }
+    
 }
+
 
 #[error_code]
 pub enum LotteryError {
@@ -80,6 +107,19 @@ pub struct DrawWinner<'info> {
     pub winner: AccountInfo<'info>,
 }
 
+#[derive(Accounts)]
+pub struct RequestRandomness<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(mut)]
+    pub config: AccountInfo<'info>,  // Network state
+    #[account(mut)]
+    pub treasury: AccountInfo<'info>,
+    #[account(mut)]
+    pub request: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
+    pub vrf_program: Program<'info, OraoVrf>,
+}
 
 #[account]
 pub struct Lottery {
@@ -87,3 +127,4 @@ pub struct Lottery {
     pub is_active: bool,     
     pub players: Vec<Pubkey>, 
 }
+
