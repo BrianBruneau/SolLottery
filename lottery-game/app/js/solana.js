@@ -95,6 +95,34 @@ async function checkLotteryStatus(lotteryAccountAddress) {
     }
 }
 
+// Get lottery status
+async function getLotteryStatus(lotteryAccountAddress) {
+    try {
+        if (!solanaConnection || !lotteryAccountAddress) {
+            throw new Error('No active lottery found');
+        }
+        const accountInfo = await solanaConnection.getAccountInfo(
+            new PublicKey(lotteryAccountAddress)
+        );
+        if (!accountInfo) {
+            throw new Error('Lottery account not found');
+        }
+        // Decode
+        const lotteryData = await program.account.lottery.fetch(
+            new PublicKey(lotteryAccountAddress)
+        );
+        return {
+            isActive: lotteryData.isActive,
+            prizeAmount: lotteryData.prizeAmount.toNumber() / 1e9,
+            players: lotteryData.players.map(player => player.toString()),
+        };
+    } catch (error) {
+        console.error('Error fetching lottery status:', error);
+        displayError('Failed to fetch lottery status: ' + error.message);
+        return null;
+    }
+}
+
 // Start a new lottery
 async function startLottery() {
     try {
@@ -136,11 +164,30 @@ async function participateInLottery(amount) {
             throw new Error('Please enter a valid amount in SOL');
         }
 
-        // TODO: call the smart contract and send 'amount' SOL
+        // Convert amount to lamports (1 SOL = 1e9 lamports)
+        const lamports = amount * 1e9;
+        
+        // Create the tx
+        const tx = new Transaction().add(
+            await lotteryProgramId.methods
+                .participateInLottery(new BigInt(lamports))
+                .accounts({
+                    lottery: new PublicKey(lotteryAccountPubkey),
+                    lotteryAccount: new PublicKey(lotteryAccountPubkey),
+                    player: new PublicKey(walletAddress),
+                    systemProgram: SystemProgram.programId,
+                })
+                .instruction()
+        );
+        
+        const signature = await sendAndConfirmTransaction(
+            solanaConnection,
+            tx,
+            [wallet.payer],
+        );
         console.log(`Participating in lottery with ${amount} SOL`);
 
-        // Placeholder: Simulate a transaction
-        return 'simulated_transaction_' + Date.now();
+        return signature;
     } catch (error) {
         console.error('Error participating in lottery:', error);
         displayError('Failed to participate in lottery: ' + error.message);
