@@ -1,5 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program; 
+use orao_solana_vrf::cpi::accounts::RequestV2;
+use orao_solana_vrf::program::OraoVrf;
+
 
 declare_id!("5hX9mhahXK14yftY8ZePS2dZBp1m7zn7Nm61rBtyBTbf");
 
@@ -106,6 +109,9 @@ pub mod lottery_game {
         let clock = Clock::get()?;
         let winner_index = clock.slot % (players.len() as u64);
         let winner_pubkey = players[winner_index as usize];
+        let winner = lottery.players[0]; 
+        let winner_account = &mut ctx.accounts.winner;
+        **winner_account.to_account_info().lamports.borrow_mut() += lottery.prize_amount;
 
         // set the winner and deactivate lottery
         lottery.winner = Some(winner_pubkey);
@@ -196,6 +202,19 @@ pub struct DrawWinner<'info> {
     pub clock: Sysvar<'info, Clock>,
 }
 
+#[derive(Accounts)]
+pub struct RequestRandomness<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(mut)]
+    pub config: AccountInfo<'info>,  // Network state
+    #[account(mut)]
+    pub treasury: AccountInfo<'info>,
+    #[account(mut)]
+    pub request: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
+    pub vrf_program: Program<'info, OraoVrf>,
+}
 
 #[derive(Accounts)]
 pub struct ClaimPrize<'info> {
@@ -243,3 +262,4 @@ pub enum LotteryError {
     #[msg("Math overflow occurred.")]
     MathOverflow,
 }
+

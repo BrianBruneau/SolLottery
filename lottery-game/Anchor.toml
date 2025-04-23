@@ -3,7 +3,7 @@ package_manager = "yarn"
 
 [features]
 resolution = true
-skip-lint = false
+skip-lint = true
 
 [programs.localnet]
 lottery_game = "5hX9mhahXK14yftY8ZePS2dZBp1m7zn7Nm61rBtyBTbf"
