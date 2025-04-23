@@ -264,7 +264,7 @@ describe("lottery-game", () => {
 
       const finalWinnerBalance = await connection.getBalance(winnerAccount.publicKey);
       
-      // The winner should receive the lottery balance (prize + rent)
+      // winner should receive the lottery balance (prize + rent)
       // minus a small transaction fee
       const expectedIncrease = lotteryBalance;
       const txFeeBuffer = 5000; // 5000 lamports buffer for transaction fee
