@@ -1,0 +1,30 @@
+{
+  "name": "lottery-game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "anchor test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@coral-xyz/anchor-cli": "^0.31.2",
+    "@orao-network/solana-vrf": "^0.6.0"
+  },
+  "devDependencies": {
+    "@coral-xyz/anchor": "^0.31.0",
+    "@solana/web3.js": "^1.98.0",
+    "@types/chai": "^5.2.1",
+    "@types/mocha": "^10.0.10",
+    "chai": "^5.2.0",
+    "mocha": "^11.1.0",
+    "ts-mocha": "^11.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "description": ""
+}
